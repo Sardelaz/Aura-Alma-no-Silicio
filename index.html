@@ -1,0 +1,1957 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA - Alma no Silício</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Open+Sans:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Variáveis de Cor e Tipografia - PALETA ESCURA COM VARIAÇÕES DE CINZA */
+        :root {
+            --color-dark-primary: #121212;
+            /* Fundo principal (quase preto) */
+            --color-dark-secondary: #1f1f1f;
+            /* Fundo de seções e cards (cinza escuro 1) */
+            --color-dark-tertiary: #2a2a2a;
+            /* Fundo de elementos como inputs (cinza escuro 2) */
+            --color-dark-quaternary: #3a3a3a;
+            /* Bordas e separadores (cinza escuro 3) */
+
+            --color-text-light: #f0f0f0;
+            /* Texto claro principal */
+            --color-text-muted: #b0b0b0;
+            /* Cinza claro para texto secundário/descrições */
+
+            --color-accent-purple: #8a2be2;
+            /* Roxo principal, vibrante */
+            --color-accent-pink: #e040fb;
+            /* Rosa do logo, como cor de destaque forte */
+
+            --shadow-soft-dark: 0 5px 15px rgba(0, 0, 0, 0.4);
+            /* Sombra suave para fundos escuros */
+            --shadow-strong-dark: 0 10px 30px rgba(0, 0, 0, 0.6);
+            /* Sombra forte para fundos escuros */
+            --shadow-card-hover: 0 20px 50px rgba(0, 0, 0, 0.9);
+            /* Sombra mais intensa no hover do card */
+
+            --font-heading: 'Montserrat', sans-serif;
+            --font-body: 'Open Sans', sans-serif;
+
+            --spacing-unit: 1rem;
+            /* Base para espaçamento (16px) */
+            --border-radius-base: 15px;
+            /* Bordas arredondadas e modernas */
+
+            --transition-speed-fast: 0.3s;
+            --transition-speed-medium: 0.5s;
+            --transition-speed-slow: 0.8s;
+        }
+
+        /* Reset Básico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--color-dark-primary);
+            color: var(--color-text-light);
+            line-height: 1.8;
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23e040fb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>') 12 12, auto;
+        }
+
+        a,
+        button,
+        input[type="submit"] {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="%238a2be2" stroke="%23e040fb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-target"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>') 15 15, pointer;
+        }
+
+
+        /* Animação ao descer a página (Scroll-Reveal) */
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(60px);
+            transition: opacity var(--transition-speed-slow) ease-out, transform var(--transition-speed-slow) ease-out;
+        }
+
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-60px);
+            transition: opacity var(--transition-speed-slow) ease-out, transform var(--transition-speed-slow) ease-out;
+        }
+
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(60px);
+            transition: opacity var(--transition-speed-slow) ease-out, transform var(--transition-speed-slow) ease-out;
+        }
+
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity var(--transition-speed-slow) ease-out, transform var(--transition-speed-slow) ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translate(0, 0) scale(1);
+        }
+
+        /* Contenedor de Contenido */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 clamp(1rem, 5vw, 3rem);
+            /* Usando clamp para padding lateral responsivo */
+        }
+
+        /* Header & Navegación */
+        header {
+            background-color: var(--color-dark-secondary);
+            padding: calc(var(--spacing-unit) * 1) 0;
+            box-shadow: var(--shadow-soft-dark);
+            position: sticky; /* Mantido como sticky para fixar no topo após rolagem */
+            top: 0; /* Coloca no topo da viewport */
+            z-index: 1000;
+            border-bottom: 1px solid var(--color-dark-quaternary);
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            /* Ajustado o padding lateral para ser mais generoso em telas menores */
+            padding: calc(var(--spacing-unit) * 0.5) clamp(0.8rem, 4vw, 3rem);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: clamp(50px, 8vw, 70px);
+            /* Tamanho do logo responsivo */
+            width: auto;
+            margin-right: var(--spacing-unit);
+            filter: drop-shadow(0 0 15px rgba(224, 64, 251, 0.5));
+            transition: filter var(--transition-speed-medium) ease;
+        }
+
+        .logo img:hover {
+            filter: drop-shadow(0 0 25px var(--color-accent-pink)) brightness(1.2);
+        }
+
+        .logo h1 {
+            font-family: var(--font-heading);
+            /* Ajustado o min-font-size para evitar corte em telas muito pequenas/zoom */
+            font-size: clamp(1.2rem, 5vw, 3.2rem);
+            text-transform: uppercase;
+            /* Ajustado o min-letter-spacing para evitar corte em telas muito pequenas/zoom */
+            letter-spacing: clamp(0px, 1vw, 6px);
+            font-weight: 900;
+            background: linear-gradient(to right, var(--color-accent-purple), var(--color-accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: transform var(--transition-speed-medium) ease;
+        }
+
+        .logo h1:hover {
+            transform: translateX(8px);
+        }
+
+        nav {
+            position: static;
+            width: auto;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            /* Permite quebra de linha para acomodar zoom */
+            justify-content: flex-end;
+            /* Alinha os itens à direita no modo desktop */
+        }
+
+        nav ul li {
+            /* Margem ajustada para dar mais espaço, mas permitir quebra */
+            margin: 0 clamp(0.5rem, 1.5vw, 1.5rem);
+        }
+
+        nav ul li a {
+            color: var(--color-text-light);
+            text-decoration: none;
+            font-weight: 600;
+            /* Tamanho da fonte dos links responsivo */
+            font-size: clamp(0.9rem, 1.8vw, 1.4rem);
+            padding: clamp(0.5rem, 1.5vw, 1rem) clamp(0.8rem, 2.5vw, 2rem); /* Padding responsivo para os links */
+            border-radius: calc(var(--border-radius-base) * 0.7);
+            transition: all var(--transition-speed-fast) ease;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+            white-space: nowrap; /* Impede que o texto do link quebre a linha */
+        }
+
+        nav ul li a:hover::before {
+            left: 100%;
+        }
+
+        nav ul li a:hover {
+            color: var(--color-accent-pink);
+            background-color: rgba(138, 43, 226, 0.4);
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: calc(var(--spacing-unit) * 0.8);
+            transition: transform var(--transition-speed-fast) ease;
+        }
+
+        .hamburger span {
+            height: 5px;
+            width: 40px;
+            background-color: var(--color-text-light);
+            margin-bottom: 9px;
+            border-radius: 5px;
+            transition: all var(--transition-speed-fast) ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(9px, 9px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(9px, -9px);
+        }
+
+        /* Sección Hero */
+        .hero {
+            background: linear-gradient(rgba(18, 18, 18, 0.95), rgba(18, 18, 18, 0.95)), url('https://via.placeholder.com/1920x1080/121212/FFFFFF?text=AURA+Dark+Background') no-repeat center center/cover;
+            background-attachment: fixed;
+            color: var(--color-text-light);
+            text-align: center;
+            padding: clamp(6rem, 15vh, 18rem) clamp(1rem, 5vw, 3rem);
+            /* Padding responsivo */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 2px solid var(--color-dark-quaternary);
+        }
+
+        /* Efecto de partículas en el fondo del Hero */
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(138, 43, 226, 0.1) 0%, transparent 70%);
+            animation: pulse-background 20s infinite alternate ease-in-out;
+            opacity: 0.5;
+            z-index: 0;
+        }
+
+        @keyframes pulse-background {
+            0% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.7;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+        }
+
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(to top, var(--color-dark-primary) 0%, transparent 100%);
+        }
+
+        .hero h2 {
+            font-family: var(--font-heading);
+            font-size: clamp(3.5rem, 5vw + 1rem, 6rem);
+            margin-bottom: calc(var(--spacing-unit) * 3);
+            color: var(--color-accent-purple);
+            text-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+            line-height: 1.1;
+            font-weight: 900;
+            letter-spacing: 3px;
+            background: linear-gradient(to right, var(--color-accent-purple), var(--color-accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            animation: fadeInScale 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        .hero h2::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            height: 12px;
+            background: radial-gradient(circle at center, rgba(224, 64, 251, 0.4) 0%, transparent 70%);
+            filter: blur(15px);
+        }
+
+
+        .hero p {
+            font-size: clamp(1.5rem, 2.5vw + 0.5rem, 2.3rem);
+            max-width: 1100px;
+            margin-bottom: calc(var(--spacing-unit) * 5);
+            color: var(--color-text-light);
+            font-weight: 300;
+            animation: fadeIn 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+            animation-delay: 0.5s;
+            opacity: 0;
+            text-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn {
+            background-image: linear-gradient(to right, var(--color-accent-pink) 0%, var(--color-accent-purple) 100%);
+            color: white;
+            padding: clamp(1rem, 2.5vw, 1.5rem) clamp(2rem, 8vw, 5rem);
+            /* Padding responsivo */
+            text-decoration: none;
+            border-radius: var(--border-radius-base);
+            font-weight: 700;
+            font-size: clamp(1.2rem, 2vw, 1.6rem);
+            /* Tamanho da fonte responsivo */
+            transition: all var(--transition-speed-fast) ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            border: none;
+            background-size: 200% auto;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            animation: fadeIn 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+            animation-delay: 1s;
+            opacity: 0;
+            position: relative;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: linear-gradient(45deg, var(--color-accent-pink), var(--color-accent-purple), var(--color-accent-pink));
+            background-size: 400%;
+            z-index: -1;
+            filter: blur(10px);
+            border-radius: var(--border-radius-base);
+            opacity: 0;
+            transition: opacity var(--transition-speed-medium) ease;
+        }
+
+        .btn:hover::before {
+            opacity: 1;
+            animation: pulse-border 1.5s infinite;
+        }
+
+        .btn:hover {
+            transform: translateY(-10px) scale(1.06);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+            background-position: right center;
+        }
+
+        /* Keyframes para animaciones de entrada */
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+                filter: blur(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+                filter: blur(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulse-border {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+
+        /* Seções Generais */
+        section {
+            padding: clamp(4rem, 10vh, 10rem) 0;
+            /* Padding responsivo para seções */
+            border-bottom: 1px solid var(--color-dark-quaternary);
+            position: relative;
+            z-index: 1;
+            background-color: var(--color-dark-primary);
+        }
+
+        section:last-of-type {
+            border-bottom: none;
+        }
+
+        section h2 {
+            font-family: var(--font-heading);
+            font-size: clamp(2.5rem, 4vw + 0.8rem, 5rem);
+            text-align: center;
+            margin-bottom: clamp(2.5rem, 5vw, 6rem);
+            /* Margin responsiva */
+            color: var(--color-accent-purple);
+            position: relative;
+            padding-bottom: calc(var(--spacing-unit) * 1.5);
+            font-weight: 900;
+            letter-spacing: 2px;
+            background: linear-gradient(to right, var(--color-accent-purple), var(--color-accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        section h2::after {
+            content: '';
+            display: block;
+            width: clamp(90px, 20vw, 180px);
+            /* Largura responsiva */
+            height: clamp(5px, 1vw, 8px);
+            /* Altura responsiva */
+            background: linear-gradient(to right, var(--color-accent-pink), var(--color-accent-purple));
+            margin: calc(var(--spacing-unit) * 1.2) auto 0;
+            border-radius: 4px;
+        }
+
+        /* Sección Quiénes Somos */
+        #quem-somos .section-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: clamp(2rem, 5vw, 5rem);
+            /* Gap responsivo */
+            align-items: flex-start;
+        }
+
+        #quem-somos .text-content {
+            /* Ajuste para garantir que o bloco de texto se adapte melhor */
+            flex: 1 1 clamp(280px, 90vw, 700px); /* Largura mínima mais flexível e máxima */
+            max-width: 700px;
+            background-color: var(--color-dark-secondary);
+            border-radius: var(--border-radius-base);
+            padding: clamp(2rem, 5vw, 3.5rem);
+            /* Padding responsivo */
+            box-shadow: var(--shadow-strong-dark);
+            border: 2px solid rgba(138, 43, 226, 0.5);
+            transition: all var(--transition-speed-medium) ease;
+        }
+
+        #quem-somos .text-content:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            border-color: var(--color-accent-pink);
+        }
+
+        #quem-somos .text-content h3 {
+            font-family: var(--font-heading);
+            font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+            /* Tamanho da fonte responsivo */
+            color: var(--color-accent-pink);
+            margin-bottom: clamp(1rem, 2vw, 2rem);
+            /* Margin responsiva */
+            font-weight: 800;
+            text-align: center;
+            letter-spacing: 1.2px;
+        }
+
+        #quem-somos .text-content p {
+            margin-bottom: clamp(1rem, 2.5vw, 2.2rem);
+            /* Margin responsiva */
+            font-size: clamp(1rem, 2vw, 1.4rem);
+            /* Tamanho da fonte responsivo */
+            color: var(--color-text-light);
+            font-weight: 300;
+        }
+
+        #quem-somos .culture-points {
+            list-style: none;
+            padding-left: 0;
+            margin-top: clamp(1.5rem, 3vw, 2.5rem);
+            /* Margin responsiva */
+        }
+
+        #quem-somos .culture-points li {
+            margin-bottom: clamp(0.6rem, 1.5vw, 1.5rem);
+            /* Margin responsiva */
+            position: relative;
+            padding-left: clamp(2rem, 4vw, 3rem);
+            /* Padding responsivo */
+            font-size: clamp(1rem, 1.8vw, 1.35rem);
+            /* Tamanho da fonte responsivo */
+            color: var(--color-text-light);
+            font-weight: 400;
+        }
+
+        #quem-somos .culture-points li::before {
+            content: '✨';
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            /* Tamanho da fonte responsivo */
+            position: absolute;
+            left: 0;
+            top: clamp(0px, -1vw, -10px);
+            /* Ajuste de posição responsivo */
+            line-height: 1;
+            filter: drop-shadow(0 0 8px var(--color-accent-pink));
+        }
+
+        /* Sección Nuestros Pilares / Nuestra Filosofía (Nueva) */
+        #nossos-pilares {
+            background-color: var(--color-dark-primary);
+        }
+
+        #nossos-pilares .pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(clamp(250px, 80vw, 350px), 1fr));
+            /* Min-width menor e mais flexível */
+            gap: clamp(2rem, 4vw, 4rem);
+            /* Gap responsivo */
+            justify-content: center;
+            align-items: stretch;
+        }
+
+        #nossos-pilares .pillar-card {
+            background-color: var(--color-dark-secondary);
+            border-radius: var(--border-radius-base);
+            padding: clamp(2.5rem, 5vw, 4rem);
+            /* Padding responsivo */
+            box-shadow: var(--shadow-strong-dark);
+            text-align: center;
+            transition: all var(--transition-speed-medium) ease;
+            border: 2px solid rgba(138, 43, 226, 0.4);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            height: auto;
+            /* Garante que a altura se ajuste ao conteúdo */
+        }
+
+        #nossos-pilares .pillar-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+            background-color: #252525;
+            border-color: var(--color-accent-pink);
+        }
+
+        #nossos-pilares .pillar-card .icon {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            /* Tamanho do ícone responsivo */
+            color: var(--color-accent-pink);
+            margin-bottom: clamp(1rem, 2vw, 2rem);
+            /* Margin responsiva */
+            filter: drop-shadow(0 0 15px rgba(224, 64, 251, 0.5));
+            transition: color var(--transition-speed-fast) ease;
+        }
+
+        #nossos-pilares .pillar-card:hover .icon {
+            color: var(--color-accent-purple);
+        }
+
+        #nossos-pilares .pillar-card h3 {
+            font-family: var(--font-heading);
+            font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+            /* Tamanho da fonte responsivo */
+            color: var(--color-accent-purple);
+            margin-bottom: clamp(0.8rem, 1.5vw, 1.5rem);
+            /* Margin responsiva */
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        #nossos-pilares .pillar-card p {
+            font-size: clamp(0.9rem, 1.5vw, 1.25rem);
+            /* Tamanho da fonte responsivo */
+            color: var(--color-text-muted);
+            font-weight: 300;
+            flex-grow: 1;
+            /* Permite que o parágrafo ocupe o espaço restante */
+        }
+
+
+        /* Sección Participantes */
+        #participantes .team-scroll-wrapper {
+            position: relative;
+            padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 5vw, 5rem);
+            margin: clamp(-2rem, -5vw, -4rem) clamp(-1rem, -5vw, -5rem);
+            /* Ajustado para min-height para permitir que expanda e height: auto */
+            min-height: clamp(550px, 80vh, 750px);
+            /* Garante altura mínima, mas permite expandir */
+            height: auto;
+            /* Permite que o contêiner se ajuste ao conteúdo dos cards */
+            display: flex;
+            align-items: center;
+            /* Centraliza verticalmente o grid dentro do wrapper */
+            justify-content: center;
+            overflow-y: hidden;
+            /* Garante que não haja scroll vertical */
+        }
+
+        #participantes .scroll-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(31, 31, 31, 0.7);
+            border: 1px solid var(--color-dark-quaternary);
+            color: var(--color-text-light);
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            line-height: 1;
+            padding: clamp(0.3rem, 1vw, 0.5rem) clamp(0.8rem, 2vw, 1rem);
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+            transition: all var(--transition-speed-fast) ease;
+            box-shadow: var(--shadow-soft-dark);
+            width: clamp(40px, 8vw, 50px);
+            height: clamp(40px, 8vw, 50px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+        }
+
+        #participantes .scroll-button:hover {
+            background-color: var(--color-accent-purple);
+            color: white;
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.5), var(--shadow-soft-dark);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        #participantes .scroll-button:active {
+            transform: translateY(-50%) scale(0.9);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #participantes .scroll-button.left {
+            left: var(--spacing-unit);
+        }
+
+        #participantes .scroll-button.right {
+            right: var(--spacing-unit);
+        }
+
+        #participantes .scroll-button.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            background-color: var(--color-dark-tertiary);
+            box-shadow: none;
+            transform: translateY(-50%) scale(1);
+        }
+
+        #participantes .team-grid {
+            display: grid;
+            grid-auto-flow: column;
+            /* Aumentei o valor máximo do clamp para permitir cards mais largos */
+            grid-auto-columns: minmax(clamp(220px, 60vw, 280px), 1fr); /* Aumentado o valor máximo para 280px */
+            gap: clamp(1.5rem, 3vw, 3.5rem);
+            justify-content: start;
+            overflow-x: scroll;
+            /* Mantém o scroll horizontal para ver todos os participantes */
+            scroll-snap-type: x mandatory;
+            padding-bottom: calc(var(--spacing-unit) * 0.5);
+            -webkit-overflow-scrolling: touch;
+            height: auto;
+            /* Permite que o grid se ajuste à altura do conteúdo */
+            scroll-behavior: smooth;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        #participantes .team-grid::-webkit-scrollbar {
+            display: none;
+        }
+
+        #participantes .team-member {
+            background-color: var(--color-dark-secondary);
+            border-radius: var(--border-radius-base);
+            padding: clamp(2rem, 4vw, 4rem);
+            text-align: center;
+            box-shadow: var(--shadow-strong-dark);
+            transition: all var(--transition-speed-medium) ease;
+            position: relative;
+            scroll-snap-align: start;
+            border: 1px solid var(--color-dark-quaternary);
+            min-width: clamp(220px, 60vw, 280px); /* Ajustado o min-width para corresponder ao grid */
+            height: auto;
+            /* Centraliza os itens verticalmente e horizontalmente */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            /* Centraliza verticalmente */
+            align-items: center;
+            /* Centraliza horizontalmente */
+        }
+
+        #participantes .team-member:hover {
+            transform: translateY(-0px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+            background-color: #252525;
+            border-color: var(--color-accent-pink);
+        }
+
+        #participantes .team-member img {
+            /* Definido como block e auto para centralização explícita */
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: clamp(110px, 18vw, 160px);
+            height: clamp(110px, 18vw, 160px);
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: calc(var(--spacing-unit) * 1.5);
+            border: 5px solid var(--color-accent-purple);
+            box-shadow: 0 0 0 3px var(--color-dark-secondary),
+                0 0 0 6px var(--color-accent-pink);
+            transition: all var(--transition-speed-medium) ease;
+            filter: grayscale(20%);
+            z-index: 1;
+            position: relative;
+        }
+
+        #participantes .team-member:hover img {
+            filter: grayscale(0%);
+            border-color: var(--color-accent-pink);
+            box-shadow: 0 0 0 3px var(--color-dark-secondary), 0 0 0 6px var(--color-accent-purple);
+            transform: scale(1.02);
+        }
+
+        /* Colores de borde específicos (mantenidos para consistencia, mas el border-color se sobrescribe en el hover) */
+        #participantes .team-member.pink-border img {
+            border-color: var(--color-accent-pink);
+        }
+
+        #participantes .team-member.purple-border img {
+            border-color: var(--color-accent-purple);
+        }
+
+        #participantes .team-member.yellow-border img {
+            border-color: #FFD700;
+        }
+
+        #participantes .team-member.green-border img {
+            border-color: #2ECC71;
+        }
+
+        #participantes .team-member.red-border img {
+            border-color: #E74C3C;
+        }
+
+        #participantes .team-member h3 {
+            font-family: var(--font-heading);
+            font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+            margin-bottom: calc(var(--spacing-unit) * 0.8);
+            color: var(--color-accent-pink);
+            font-weight: 800;
+            letter-spacing: 0.8px;
+        }
+
+        #participantes .team-member p {
+            font-size: clamp(0.8rem, 1.3vw, 1.15rem);
+            color: var(--color-text-muted);
+            font-weight: 300;
+            /* Adicionado white-space para prevenir quebra de linha prematura */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis; /* Adiciona reticências se o texto for muito longo */
+            max-width: 100%; /* Garante que não ultrapasse a largura do pai */
+        }
+
+        /* Sección Proyectos */
+        #projetos .project-card {
+            background-color: var(--color-dark-secondary);
+            border-radius: var(--border-radius-base);
+            padding: clamp(1.5rem, 3.5vw, 3.5rem);
+            /* Padding responsivo */
+            box-shadow: var(--shadow-strong-dark);
+            text-align: center;
+            transition: all var(--transition-speed-medium) ease;
+            border: 2px solid rgba(224, 64, 251, 0.4);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 0;
+            display: flex;
+            flex-direction: column;
+            height: auto;
+            /* Garante que a altura se ajuste ao conteúdo */
+        }
+
+        #projetos .project-card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(clamp(280px, 80vw, 350px), 1fr));
+            /* Min-width menor e mais flexível */
+            gap: clamp(2rem, 4vw, 4rem);
+            /* Gap responsivo */
+            justify-content: center;
+        }
+
+
+        #projetos .project-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.8);
+            background-color: #252525;
+            border-color: var(--color-accent-purple);
+        }
+
+        #projetos .project-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(224, 64, 251, 0.1), transparent 50%, rgba(138, 43, 226, 0.1));
+            opacity: 0;
+            transition: opacity var(--transition-speed-medium) ease;
+        }
+
+        #projetos .project-card:hover::after {
+            opacity: 1;
+        }
+
+
+        #projetos .project-card h3 {
+            font-family: var(--font-heading);
+            font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+            /* Tamanho da fonte responsivo */
+            color: var(--color-accent-purple);
+            margin-bottom: clamp(1rem, 2vw, 1.5rem);
+            /* Margin responsiva */
+            font-weight: 800;
+            letter-spacing: 1.5px;
+        }
+
+        #projetos .project-card p {
+            margin-bottom: clamp(1rem, 2vw, 1.5rem);
+            /* Margin responsiva */
+            font-size: clamp(1rem, 1.8vw, 1.25rem);
+            /* Tamanho da fonte responsivo */
+            color: var(--color-text-light);
+            font-weight: 300;
+            flex-grow: 1;
+        }
+
+        #projetos .project-card .delivery-date {
+            font-weight: 700;
+            color: var(--color-accent-pink);
+            font-size: clamp(1.1rem, 1.5vw, 1.4rem);
+            /* Tamanho da fonte responsivo */
+            background-color: rgba(224, 64, 251, 0.15);
+            padding: clamp(0.5rem, 1vw, 0.7rem) clamp(1rem, 2vw, 1.5rem);
+            /* Padding responsivo */
+            border-radius: calc(var(--border-radius-base) * 0.8);
+            display: inline-block;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            letter-spacing: 0.8px;
+            margin-top: auto;
+        }
+
+        #projetos .project-card .project-image-placeholder {
+            width: 100%;
+            height: clamp(180px, 30vh, 300px);
+            background-image: url(./img/logo2.png);
+            background-position: center;
+            background-size: cover;
+            /* Altura responsiva */
+            background-color: var(--color-dark-tertiary);
+            border-radius: var(--border-radius-base);
+            margin-bottom: calc(var(--spacing-unit) * 2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-muted);
+            font-size: clamp(1.2rem, 2vw, 1.5rem);
+            /* Tamanho da fonte responsivo */
+            font-weight: 600;
+            border: 1px dashed var(--color-dark-quaternary);
+        }
+
+        /* Sección Testimonios (Nueva) */
+        #depoimentos {
+            background-color: var(--color-dark-secondary);
+            padding: clamp(6rem, 10vh, 8rem) 0;
+            /* Padding responsivo */
+        }
+
+        #depoimentos .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(clamp(280px, 80vw, 350px), 1fr));
+            /* Min-width menor e mais flexível */
+            gap: clamp(1.5rem, 3vw, 3rem);
+            /* Gap responsivo */
+            justify-content: center;
+        }
+
+        #depoimentos .testimonial-card {
+            background-color: var(--color-dark-tertiary);
+            border-radius: var(--border-radius-base);
+            padding: clamp(2.5rem, 4.5vw, 4rem);
+            /* Padding responsivo */
+            box-shadow: var(--shadow-strong-dark);
+            border: 1px solid var(--color-dark-quaternary);
+            transition: all var(--transition-speed-medium) ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: auto;
+            /* Garante que a altura se ajuste ao conteúdo */
+        }
+
+        #depoimentos .testimonial-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9);
+            border-color: var(--color-accent-pink);
+        }
+
+        #depoimentos .testimonial-card p {
+            font-style: italic;
+            font-size: clamp(1rem, 1.8vw, 1.3rem);
+            /* Tamanho da fonte responsivo */
+            color: var(--color-text-light);
+            margin-bottom: clamp(1rem, 2vw, 2rem);
+            /* Margin responsiva */
+            position: relative;
+            padding-left: clamp(1.5rem, 2.5vw, 2rem);
+            /* Padding responsivo */
+        }
+
+        #depoimentos .testimonial-card p::before {
+            content: '“';
+            position: absolute;
+            left: 0;
+            top: clamp(-0.2rem, -0.5vw, -0.5rem);
+            /* Ajuste de posição responsivo */
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            /* Tamanho da fonte responsivo */
+            color: var(--color-accent-purple);
+            line-height: 1;
+            font-family: serif;
+        }
+
+        #depoimentos .testimonial-author {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            margin-top: auto;
+            padding-top: clamp(1rem, 2vw, 1.5rem);
+            /* Padding responsivo */
+            border-top: 1px dashed rgba(224, 64, 251, 0.2);
+        }
+
+        #depoimentos .testimonial-author img {
+            width: clamp(40px, 8vw, 70px);
+            /* Tamanho da imagem responsivo */
+            height: clamp(40px, 8vw, 70px);
+            /* Tamanho da imagem responsivo */
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: clamp(0.8rem, 1.5vw, 1.5rem);
+            /* Margin responsiva */
+            border: 3px solid var(--color-accent-pink);
+            box-shadow: 0 0 10px rgba(224, 64, 251, 0.4);
+        }
+
+        #depoimentos .testimonial-author .info {
+            text-align: right;
+        }
+
+        #depoimentos .testimonial-author .info h4 {
+            font-family: var(--font-heading);
+            font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+            /* Tamanho da fonte responsivo */
+            color: var(--color-accent-pink);
+            margin-bottom: calc(var(--spacing-unit) * 0.2);
+            font-weight: 700;
+        }
+
+        #depoimentos .testimonial-author .info span {
+            font-size: clamp(0.8rem, 1.5vw, 1.1rem);
+            /* Tamanho da fonte responsivo */
+            color: var(--color-text-muted);
+            font-weight: 400;
+        }
+
+        /* Sección Contacto */
+        #contato .contact-info {
+            text-align: center;
+            margin-bottom: clamp(2.5rem, 5vw, 5rem);
+            /* Margin responsiva */
+            background-color: var(--color-dark-secondary);
+            padding: clamp(2rem, 5vw, 4rem);
+            /* Padding responsivo */
+            border-radius: var(--border-radius-base);
+            box-shadow: var(--shadow-strong-dark);
+            border: 2px solid rgba(138, 43, 226, 0.4);
+        }
+
+        #contato .contact-info h3 {
+            font-family: var(--font-heading);
+            font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+            /* Tamanho da fonte responsivo */
+            color: var(--color-accent-purple);
+            margin-top: clamp(1.5rem, 3vw, 2rem);
+            /* Margin responsiva */
+            margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+            /* Margin responsiva */
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        #contato .contact-info p {
+            font-size: clamp(1rem, 2vw, 1.4rem);
+            /* Tamanho da fonte responsivo */
+            margin-bottom: clamp(1rem, 2vw, 1.8rem);
+            /* Margin responsiva */
+            color: var(--color-text-light);
+            font-weight: 300;
+        }
+
+        #contato .contact-info ul {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: clamp(2rem, 4vw, 3.5rem);
+            /* Margin responsiva */
+            display: inline-block;
+            text-align: left;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: clamp(1rem, 2.5vw, 1.8rem) clamp(1.5rem, 4vw, 3rem);
+            /* Padding responsivo */
+            border-radius: calc(var(--border-radius-base) * 0.8);
+            border: 1px dashed var(--color-dark-quaternary);
+            box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.6);
+        }
+
+        #contato .contact-info li {
+            margin-bottom: clamp(0.8rem, 1.5vw, 1.2rem);
+            /* Margin responsiva */
+            font-size: clamp(1rem, 1.8vw, 1.35rem);
+            /* Tamanho da fonte responsivo */
+            color: var(--color-text-light);
+            position: relative;
+            padding-left: clamp(2rem, 3.5vw, 2.8rem);
+            /* Padding responsivo */
+            font-weight: 400;
+        }
+
+        #contato .contact-info li::before {
+            content: '✨';
+            font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+            /* Tamanho da fonte responsivo */
+            position: absolute;
+            left: 0;
+            top: clamp(-7px, -1vw, -7px);
+            line-height: 1;
+            filter: drop-shadow(0 0 6px var(--color-accent-pink));
+        }
+
+
+        #contato .contact-info a {
+            color: var(--color-accent-pink);
+            text-decoration: none;
+            transition: all var(--transition-speed-fast) ease;
+            font-weight: 600;
+            font-size: clamp(1rem, 1.8vw, 1.3rem);
+            /* Tamanho da fonte responsivo */
+            display: inline-block;
+            margin: calc(var(--spacing-unit) * 0.4);
+            padding: clamp(0.4rem, 1vw, 0.6rem) clamp(0.8rem, 2vw, 1.2rem);
+            /* Padding responsivo */
+            border-radius: calc(var(--border-radius-base) * 0.6);
+            background-color: rgba(255, 0, 255, 0.15);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        #contato .contact-info a:hover {
+            color: var(--color-accent-purple);
+            transform: translateY(-4px) scale(1.03);
+            background-color: rgba(155, 89, 182, 0.3);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Estilos para o container do mapa responsivo */
+        .map-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            /* 16:9 Aspect Ratio (9 / 16 * 100) */
+            height: 0;
+            overflow: hidden;
+            border-radius: var(--border-radius-base);
+            /* Herda o border-radius */
+            box-shadow: var(--shadow-strong-dark);
+            /* Adiciona sombra ao container do mapa */
+            border: 1px solid var(--color-dark-quaternary);
+        }
+
+        .map-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .contact-form {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--color-dark-secondary);
+            padding: clamp(1.5rem, 5vw, 4.5rem);
+            /* Ajustado o padding para telas pequenas */
+            border-radius: var(--border-radius-base);
+            box-shadow: var(--shadow-strong-dark);
+            border: 2px solid rgba(224, 64, 251, 0.4);
+        }
+
+        .contact-form h3 {
+            font-family: var(--font-heading);
+            font-size: clamp(2.2rem, 4vw, 3.2rem);
+            /* Tamanho da fonte responsivo */
+            color: var(--color-accent-purple);
+            text-align: center;
+            margin-bottom: clamp(2rem, 4vw, 4rem);
+            /* Margin responsiva */
+            font-weight: 800;
+            letter-spacing: 1.5px;
+        }
+
+        .contact-form label {
+            display: block;
+            margin-bottom: clamp(0.8rem, 1.5vw, 1.2rem);
+            /* Margin responsiva */
+            font-weight: 600;
+            font-size: clamp(1rem, 1.8vw, 1.3rem);
+            /* Tamanho da fonte responsivo */
+            color: var(--color-text-light);
+            letter-spacing: 1px;
+        }
+
+        .contact-form input[type="text"],
+        .contact-form input[type="email"],
+        .contact-form textarea,
+        .contact-form select {
+            width: 100%;
+            padding: clamp(1rem, 2vw, 1.5rem);
+            /* Padding responsivo */
+            margin-bottom: clamp(1.5rem, 2.8vw, 2.8rem);
+            /* Margin responsiva */
+            border: 1px solid var(--color-dark-quaternary);
+            border-radius: calc(var(--border-radius-base) * 0.7);
+            background-color: var(--color-dark-tertiary);
+            color: var(--color-text-light);
+            font-size: clamp(1rem, 1.8vw, 1.25rem);
+            /* Tamanho da fonte responsivo */
+            transition: all var(--transition-speed-fast) ease;
+            box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.6);
+        }
+
+        .contact-form select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: linear-gradient(45deg, transparent 50%, var(--color-text-muted) 50%),
+                linear-gradient(135deg, var(--color-text-muted) 50%, transparent 50%);
+            background-position: calc(100% - 20px) center, calc(100% - 15px) center;
+            background-size: 8px 8px, 8px 8px;
+            background-repeat: no-repeat;
+            padding-right: calc(var(--spacing-unit) * 3);
+            cursor: pointer;
+        }
+
+        .contact-form input[type="text"]:focus,
+        .contact-form input[type="email"]:focus,
+        .contact-form textarea:focus,
+        .contact-form select:focus {
+            border-color: var(--color-accent-purple);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(138, 43, 226, 0.3), inset 0 4px 10px rgba(0, 0, 0, 0.8);
+            background-color: #202020;
+        }
+
+        /* Estilización del placeholder */
+        .contact-form input::placeholder,
+        .contact-form textarea::placeholder {
+            color: var(--color-text-muted);
+            opacity: 0.7;
+        }
+
+        .contact-form textarea {
+            resize: vertical;
+            min-height: clamp(100px, 20vh, 250px);
+            /* Altura responsiva, ajustado o mínimo */
+        }
+
+        .contact-form .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: clamp(1.5rem, 2.8vw, 2.8rem);
+            /* Margin responsiva */
+            font-size: clamp(0.9rem, 1.5vw, 1.15rem);
+            /* Tamanho da fonte responsivo */
+            color: var(--color-text-muted);
+        }
+
+        .contact-form .checkbox-group input[type="checkbox"] {
+            width: clamp(16px, 2.5vw, 20px);
+            /* Tamanho responsivo */
+            height: clamp(16px, 2.5vw, 20px);
+            /* Tamanho responsivo */
+            margin-right: var(--spacing-unit);
+            cursor: pointer;
+            border-radius: 4px;
+            background-color: var(--color-dark-tertiary);
+            border: 1px solid var(--color-dark-quaternary);
+            transition: all var(--transition-speed-fast) ease;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .contact-form .checkbox-group input[type="checkbox"]:checked {
+            background-color: var(--color-accent-purple);
+            border-color: var(--color-accent-pink);
+        }
+
+        .contact-form .checkbox-group input[type="checkbox"]:checked::after {
+            content: '✓';
+            color: white;
+            font-size: clamp(12px, 2vw, 16px);
+            /* Tamanho da fonte responsivo */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+        }
+
+        .contact-form .checkbox-group input[type="checkbox"]:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(138, 43, 226, 0.3), inset 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+
+        .contact-form .checkbox-group label {
+            margin-bottom: 0;
+            cursor: pointer;
+            font-weight: 400;
+        }
+
+        .contact-form .checkbox-group a {
+            color: var(--color-accent-pink);
+            text-decoration: none;
+            transition: color var(--transition-speed-fast) ease;
+            margin-left: 5px;
+        }
+
+        .contact-form .checkbox-group a:hover {
+            color: var(--color-accent-purple);
+            text-decoration: underline;
+        }
+
+
+        /* Estilo para el botón de envío de mensaje en el formulario de contacto */
+        .contact-form button {
+            display: block;
+            width: 100%;
+            padding: clamp(1rem, 2vw, 1.8rem);
+            /* Padding responsivo */
+            background-image: linear-gradient(to right, var(--color-accent-pink) 0%, var(--color-accent-purple) 100%);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-base);
+            font-size: clamp(1.15rem, 2vw, 1.6rem);
+            /* Tamanho da fonte responsivo */
+            font-weight: 700;
+            cursor: pointer;
+            transition: all var(--transition-speed-medium) ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7), 0 0 20px rgba(224, 64, 251, 0.5);
+            background-size: 200% auto;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .contact-form button::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: linear-gradient(45deg, var(--color-accent-pink), var(--color-accent-purple), var(--color-accent-pink));
+            background-size: 400%;
+            z-index: -1;
+            filter: blur(15px);
+            border-radius: var(--border-radius-base);
+            opacity: 0;
+            transition: opacity var(--transition-speed-medium) ease, background-position var(--transition-speed-slow) ease;
+        }
+
+        .contact-form button:hover::before {
+            opacity: 1;
+            animation: pulse-border-contact 2s infinite;
+        }
+
+        .contact-form button:hover {
+            background-position: right center;
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(224, 64, 251, 0.8);
+            filter: brightness(1.2);
+        }
+
+        /* Keyframes para la animación del brillo/borde del botón de contacto */
+        @keyframes pulse-border-contact {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Barra de Progresso de Desplazamiento (Nueva) */
+        #scroll-progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 8px;
+            background: linear-gradient(to right, var(--color-accent-pink), var(--color-accent-purple));
+            z-index: 9999;
+            transition: width 0.1s linear;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--color-dark-secondary);
+            color: var(--color-text-light);
+            text-align: center;
+            padding: clamp(3rem, 6vw, 5rem) 0;
+            /* Padding responsivo */
+            margin-top: clamp(5rem, 8vw, 8rem);
+            /* Margin responsiva */
+            box-shadow: 0 -6px 20px var(--shadow-strong-dark);
+            font-size: clamp(1rem, 1.5vw, 1.2rem);
+            /* Tamanho da fonte responsivo */
+            position: relative;
+            border-top: 1px solid var(--color-dark-quaternary);
+        }
+
+        footer p {
+            margin-bottom: clamp(0.8rem, 1.5vw, 1.2rem);
+            /* Margin responsiva */
+            font-weight: 300;
+        }
+
+        footer p:last-child {
+            margin-bottom: 0;
+            font-style: italic;
+            font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+            /* Tamanho da fonte responsivo */
+            color: var(--color-text-light);
+        }
+
+        /* Responsividade */
+        @media (min-width: 993px) {
+            nav ul {
+                flex-wrap: nowrap;
+                justify-content: flex-end;
+            }
+
+            nav ul li {
+                margin: 0 clamp(0.5rem, 1.5vw, 1.5rem);
+                /* Ajustado para desktop também */
+                white-space: nowrap;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                cursor: auto;
+            }
+
+            header .container {
+                flex-wrap: wrap;
+                padding: calc(var(--spacing-unit) * 0.5) clamp(0.8rem, 3vw, 1.5rem);
+                /* Ajustado padding lateral para mobile */
+            }
+
+            .logo {
+                flex: 1;
+                order: 1;
+                justify-content: center;
+                position: relative;
+            }
+
+            .logo img {
+                position: absolute;
+                left: 0;
+                margin-left: var(--spacing-unit);
+                height: clamp(40px, 7vw, 50px);
+                width: auto;
+            }
+
+            .logo h1 {
+                font-size: clamp(1.4rem, 4vw, 2rem);
+                /* Ajustado o min-font-size para telas muito pequenas */
+                letter-spacing: clamp(0.5px, 2vw, 2px);
+                /* E o espaçamento */
+                margin: 0 auto;
+                text-align: center;
+            }
+
+            nav {
+                width: 100%;
+                order: 3;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                /* Garante que o nav ocupe toda a largura horizontal */
+                display: none;
+                background-color: var(--color-dark-secondary);
+                box-shadow: var(--shadow-soft-dark);
+                border-top: 1px solid var(--color-dark-quaternary);
+                text-align: center;
+                /* Centraliza os itens do menu no mobile */
+                /* Adicionado para transição suave do menu */
+                opacity: 0;
+                transform: translateY(-20px);
+                transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+            }
+
+            nav.active {
+                display: flex;
+                /* Mostra o menu */
+                flex-direction: column;
+                /* Empilha os itens verticalmente */
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            nav ul {
+                flex-direction: column;
+                width: 100%;
+                padding: calc(var(--spacing-unit) * 1.5) 0;
+                align-items: center;
+                /* Centraliza os itens verticalmente */
+            }
+
+            nav ul li {
+                margin: calc(var(--spacing-unit) * 0.8) 0;
+            }
+
+            nav ul li a {
+                padding: calc(var(--spacing-unit) * 0.9);
+                font-size: clamp(1.1rem, 2vw, 1.25rem);
+                color: var(--color-text-light);
+            }
+
+            nav ul li a::after {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+                order: 2;
+            }
+
+            .hamburger span {
+                background-color: var(--color-text-light);
+            }
+
+            #participantes .scroll-button {
+                /* Ajuste dos botões de scroll para telas menores */
+                width: clamp(35px, 6vw, 40px);
+                height: clamp(35px, 6vw, 40px);
+                font-size: clamp(1.5rem, 3vw, 1.8rem);
+            }
+
+            #participantes .scroll-button.left {
+                left: 5px;
+            }
+
+            #participantes .scroll-button.right {
+                right: 5px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="scroll-progress-bar"></div>
+
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="./img/logo3.png" alt="Aura Logo">
+                <h1>AURA</h1>
+            </div>
+            <nav>
+                <ul id="nav-menu">
+                    <li><a href="#quem-somos">Quem Somos</a></li>
+                    <li><a href="#nossos-pilares">Nossos Pilares</a></li>
+                    <li><a href="#participantes">Participantes</a></li>
+                    <li><a href="#projetos">Projetos</a></li>
+                    <li><a href="#depoimentos">Depoimentos</a></li>
+                    <li><a href="#contato">Contato</a></li>
+                </ul>
+                <div class="hamburger" id="hamburger-menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h2 class="reveal reveal-scale">Alma no Silício</h2>
+            <p>A nossa equação é simples: Cérebro (Tecnologia) + Coração (Design) = Alma. Estamos transformando o futuro
+                com sistemas que emocionam e impressionam.</p>
+            <a href="#projetos" class="btn">Conheça Nossos Projetos</a>
+        </section>
+
+        <section id="quem-somos" class="reveal reveal-up">
+            <div class="container">
+                <h2>Quem Somos - Cultura: O Código da Aura</h2>
+                <div class="section-content">
+                    <div class="text-content">
+                        <p>Na Aura, vivemos na interseção da tecnologia e da arte, dedicados a criar sistemas com alma
+                            que emocionam. Somos a **Minoria Radical**, odiamos a mediocridade e comprimimos o tempo para
+                            entregar excelência. Nossa cultura é nosso código. </p>
+                        <h3>Células - Lógica + Arte</h3>
+                        <p>Esta é a Aura: </p>
+                        <ul class="culture-points">
+                            <li>1 Célula de Direção. </li>
+                            <li>4 Células de Criação. </li>
+                            <li>10 pessoas. Focadas. Integradas. </li>
+                        </ul>
+                        <p>Nosso propósito é ir além do funcional, criando experiências que **resonam com a essência humana**, onde cada linha de código e pixel de design carrega uma intenção profunda e um impacto duradouro.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="nossos-pilares" class="reveal reveal-up">
+            <div class="container">
+                <h2>Nossos Pilares - A Essência da AURA</h2>
+                <div class="pillars-grid">
+                    <div class="pillar-card reveal reveal-scale" style="transition-delay: 0.1s;">
+                        <div class="icon"><i class="fas fa-lightbulb"></i></div>
+                        <h3>Inovação Constante</h3>
+                        <p>Buscamos sempre as mais novas tecnologias e metodologias para garantir soluções de ponta e inovadoras.</p>
+                    </div>
+                    <div class="pillar-card reveal reveal-scale" style="transition-delay: 0.2s;">
+                        <div class="icon"><i class="fas fa-heart"></i></div>
+                        <h3>Design Centrado no Humano</h3>
+                        <p>Cada projeto é pensado para emocionar, com foco na usabilidade e na experiência que ressoa com o usuário.</p>
+                    </div>
+                    <div class="pillar-card reveal reveal-scale" style="transition-delay: 0.3s;">
+                        <div class="icon"><i class="fas fa-bolt"></i></div>
+                        <h3>Excelência e Velocidade</h3>
+                        <p>Comprimimos o tempo para entregar resultados de altíssima qualidade, sem abrir mão da perfeição em cada detalhe.</p>
+                    </div>
+                    <div class="pillar-card reveal reveal-scale" style="transition-delay: 0.4s;">
+                        <div class="icon"><i class="fas fa-users-rays"></i></div>
+                        <h3>Colaboração Integrada</h3>
+                        <p>Nossas células de direção e criação trabalham em sintonia, transformando ideias em realidade de forma coesa e eficiente.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="participantes" class="reveal reveal-up">
+            <div class="container">
+                <h2>Nossos Participantes</h2>
+                <div class="team-scroll-wrapper">
+                    <button class="scroll-button left" id="scroll-left-btn"><</button>
+                    <div class="team-grid" id="team-grid-scroll">
+                        <div class="team-member pink-border reveal reveal-scale">
+                            <img src="./img/ari.png" alt="Foto do Participante 1 - Artista">
+                            <h3>Ari</h3>
+                            <p>Ari</p>
+                        </div>
+                        <div class="team-member pink-border reveal reveal-scale">
+                            <img src="./img/Lider.png" alt="Foto do Participante 1 - Artista">
+                            <h3>Participante 1</h3>
+                            <p>Líder de Direção / Célula de Direção</p>
+                        </div>
+                        <div class="team-member pink-border reveal reveal-scale" style="transition-delay: 0.1s;">
+                            <img src="./img/Lider2.png" alt="Foto do Participante 2 - Artista">
+                            <h3>Participante 2</h3>
+                            <p>Líder de Direção / Célula de Direção</p>
+                        </div>
+                        <div class="team-member purple-border reveal reveal-scale" style="transition-delay: 0.2s;">
+                            <img src="./img/Grupo1a.png" alt="Foto do Participante 3 - Desenvolvedor">
+                            <h3>Guilherme</h3>
+                            <p>Desenvolvedor / Célula de Criação</p>
+                        </div>
+                        <div class="team-member purple-border reveal reveal-scale" style="transition-delay: 0.3s;">
+                            <img src="./img/Grupo1b.png" alt="Foto do Participante 4 - Desenvolvedor">
+                            <h3>Maria Eliza</h3>
+                            <p>Desenvolvedor / Célula de Criação</p>
+                        </div>
+                        <div class="team-member yellow-border reveal reveal-scale" style="transition-delay: 0.4s;">
+                            <img src="./img/Grupo2b.png" alt="Foto do Participante 5 - UX/UI Designer">
+                            <h3>João Augusto</h3>
+                            <p>UX/UI Designer / Célula de Criação</p>
+                        </div>
+                        <div class="team-member yellow-border reveal reveal-scale" style="transition-delay: 0.5s;">
+                            <img src="./img/Grupo2a.png" alt="Foto do Participante 6 - UX/UI Designer">
+                            <h3>Gaby</h3>
+                            <p>UX/UI Designer / Célula de Criação</p>
+                        </div>
+                        <div class="team-member green-border reveal reveal-scale" style="transition-delay: 0.6s;">
+                            <img src="./img/Grupo3b.png" alt="Foto do Participante 7 - Marketing Digital">
+                            <h3>Enzo</h3>
+                            <p>Marketing Digital / Célula de Criação</p>
+                        </div>
+                        <div class="team-member green-border reveal reveal-scale" style="transition-delay: 0.7s;">
+                            <img src="./img/Grupo3a.png" alt="Foto do Participante 8 - Marketing Digital">
+                            <h3>Participante 8</h3>
+                            <p>Marketing Digital / Célula de Criação</p>
+                        </div>
+                        <div class="team-member red-border reveal reveal-scale" style="transition-delay: 0.8s;">
+                            <img src="./img/Grupo4a.png" alt="Foto do Participante 9 - Líder de Direção">
+                            <h3>Participante 9</h3>
+                            <p>Marketing Digital / Célula de Criação</p>
+                        </div>
+                        <div class="team-member red-border reveal reveal-scale" style="transition-delay: 0.9s;">
+                            <img src="./img/Grupo4b.png" alt="Foto do Participante 10 - Líder de Direção">
+                            <h3>Participante 10</h3>
+                            <p>Marketing Digital / Célula de Criação</p>
+                        </div>
+                        <div class="team-member red-border reveal reveal-scale" style="transition-delay: 1.0s;">
+                            <img src="./img/Grupo4c.png" alt="Foto do Participante 11 - Líder de Direção">
+                            <h3>Participante 11</h3>
+                            <p>Marketing Digital / Célula de Criação</p>
+                        </div>
+                    </div>
+                    <button class="scroll-button right" id="scroll-right-btn">></button>
+                </div>
+            </div>
+        </section>
+
+        <section id="projetos" class="reveal reveal-up">
+            <div class="container">
+                <h2>Nossos Projetos</h2>
+                <div class="project-card-grid">
+                    <div class="project-card reveal reveal-scale">
+                        <div class="project-image-placeholder"></div>
+                        <h3>Primeiro Projeto: O site da Aura</h3>
+                        <p>O site da Aura não é um "projeto". É a nossa declaração de guerra. É a primeira página do
+                            nosso grupo e deve demonstrar nossa cultura e de fato impressionar todos. </p>
+                        <p class="delivery-date">Entrega: 28/06 - (Primeira Reunião) </p>
+                        <a href="#" class="btn" style="margin-top: calc(var(--spacing-unit) * 2);">Ver Detalhes</a>
+                    </div>
+                    <div class="project-card reveal reveal-scale" style="transition-delay: 0.1s;">
+                        <div class="project-image-placeholder"></div>
+                        <h3>Plataforma EduTech X</h3>
+                        <p>Desenvolvemos uma plataforma educacional interativa, com foco em gamificação e personalização do aprendizado, utilizando as mais recentes tecnologias web.</p>
+                        <p class="delivery-date">Tecnologias: React, Node.js, Firebase</p>
+                        <a href="#" class="btn" style="margin-top: calc(var(--spacing-unit) * 2);">Ver Detalhes</a>
+                    </div>
+                    <div class="project-card reveal reveal-scale" style="transition-delay: 0.2s;">
+                        <div class="project-image-placeholder"></div>
+                        <h3>App Flow - Bem-Estar</h3>
+                        <p>Um aplicativo mobile para acompanhamento de saúde mental, com exercícios de meditação guiada e ferramentas de diário, proporcionando uma experiência calma e intuitiva.</p>
+                        <p class="delivery-date">Tecnologias: React Native, GraphQL, AWS</p>
+                        <a href="#" class="btn" style="margin-top: calc(var(--spacing-unit) * 2);">Ver Detalhes</a>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: calc(var(--spacing-unit) * 5);">
+                    <a href="#" class="btn">Ver Portfólio Completo</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="depoimentos" class="reveal reveal-up">
+            <div class="container">
+                <h2>O Que Nossos Parceiros Dizem</h2>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card reveal reveal-scale">
+                        <p>"A AURA transformou nossa visão em realidade com um nível de paixão e excelência que nunca vi antes. Eles não apenas entregam um produto, entregam uma experiência com alma."</p>
+                        <div class="testimonial-author">
+                            <img src="https://via.placeholder.com/70/6A5ACD/FFFFFF?text=JP" alt="Foto de João Paulo">
+                            <div class="info">
+                                <h4>João Paulo Silva</h4>
+                                <span>CEO, Inova Soluções</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card reveal reveal-scale" style="transition-delay: 0.1s;">
+                        <p>"Trabalhar com a AURA é ter a certeza de que cada detalhe será tratado com maestria. A combinação de tecnologia avançada e design intuitivo é impecável."</p>
+                        <div class="testimonial-author">
+                            <img src="https://via.placeholder.com/70/4682B4/FFFFFF?text=MR" alt="Foto de Maria Ribeiro">
+                            <div class="info">
+                                <h4>Maria Ribeiro</h4>
+                                <span>Diretora de Marketing, Alpha Corp</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card reveal reveal-scale" style="transition-delay: 0.2s;">
+                        <p>"A capacidade da AURA de compreender e materializar nossas necessidades, adicionando um toque de criatividade e inovação, é algo raro no mercado."</p>
+                        <div class="testimonial-author">
+                            <img src="https://via.placeholder.com/70/DAA520/FFFFFF?text=AN" alt="Foto de Ana Nogueira">
+                            <div class="info">
+                                <h4>Ana Nogueira</h4>
+                                <span>Fundadora, Startup Conecta</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contato" class="reveal reveal-up">
+            <div class="container">
+                <h2>Fale Conosco</h2>
+                <div class="contact-info">
+                    <h3>Estamos Prontos para Ouvir Sua Ideia</h3>
+                    <p>Seja para um novo projeto, parceria ou apenas para bater um papo, entre em contato. Queremos transformar sua visão em realidade.</p>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> E-mail: <a href="mailto:contato@aura.com">contato@aura.com</a></li>
+                        <li><i class="fas fa-phone-alt"></i> Telefone: <a href="tel:+5511999999999">+55 11 99999-9999</a></li>
+                        <li><i class="fas fa-map-marker-alt"></i> Endereço: Rua da Inovação, 123 - Itapetininga, SP</li>
+                    </ul>
+                    <div style="margin-top: calc(var(--spacing-unit) * 3);">
+                        <div class="map-container">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d117075.7601956163!2d-48.1565578508492!3d-23.585500977286397!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94c5d8e7c2e0b52b%3A0x6e7b7e7b7e7b7e7b!2sItapetininga%2C%20SP!5e0!3m2!1spt-BR!2sbr!4v1719602495000!5m2!1spt-BR!2sbr"
+                            title="Localização da Aura em Itapetininga, SP" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                    </div>
+                </div>
+
+                <form class="contact-form">
+                    <h3>Envie-nos uma Mensagem</h3>
+                    <label for="name">Nome Completo:</label>
+                    <input type="text" id="name" name="name" placeholder="Seu nome" required>
+
+                    <label for="email">E-mail:</label>
+                    <input type="email" id="email" name="email" placeholder="seu.email@exemplo.com" required>
+
+                    <label for="subject">Assunto:</label>
+                    <select id="subject" name="subject" required>
+                        <option value="">Selecione um assunto</option>
+                        <option value="projeto">Novo Projeto</option>
+                        <option value="parceria">Parceria</option>
+                        <option value="suporte">Suporte</option>
+                        <option value="outros">Outros</option>
+                    </select>
+
+                    <label for="message">Sua Mensagem:</label>
+                    <textarea id="message" name="message" placeholder="Descreva sua ideia ou questão aqui..." required></textarea>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="privacy-policy" name="privacy-policy" required>
+                        <label for="privacy-policy">Eu concordo com a <a href="#">Política de Privacidade</a>.</label>
+                    </div>
+
+                    <button type="submit">Enviar Mensagem</button>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2025 AURA. Todos os direitos reservados.</p>
+            <p>"Quem estará nas trincheiras ao teu lado?<br>E isso importa?<br>-Mais do que a própria guerra" </p>
+            <p>(Ernest Hemingway) </p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const hamburger = document.getElementById('hamburger-menu');
+            const navMenu = document.getElementById('nav-menu');
+            const teamGrid = document.getElementById('team-grid-scroll');
+            const scrollLeftBtn = document.getElementById('scroll-left-btn');
+            const scrollRightBtn = document.getElementById('scroll-right-btn');
+            const scrollProgressBar = document.getElementById('scroll-progress-bar');
+
+            // --- Menu Hamburguer ---
+            hamburger.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+                hamburger.classList.toggle('active');
+            });
+
+            // Fechar o menu de navegação ao clicar em um link (para mobile) com delegação
+            // Adicionado verificação para garantir que navMenu não seja nulo
+            if (navMenu) {
+                navMenu.addEventListener('click', (event) => {
+                    if (event.target.tagName === 'A' && navMenu.classList.contains('active')) {
+                        navMenu.classList.remove('active');
+                        hamburger.classList.remove('active');
+                    }
+                });
+            }
+
+
+            // --- Scroll Horizontal da Seção de Participantes ---
+            let scrollAmount = 0;
+            if (teamGrid && teamGrid.firstElementChild) { // Verificação adicional para garantir que teamGrid e seu primeiro filho existem
+                const firstCard = teamGrid.firstElementChild;
+                const cardWidth = firstCard.offsetWidth;
+                const gridComputedStyle = getComputedStyle(teamGrid);
+                const gap = parseFloat(gridComputedStyle.getPropertyValue('gap')) || 0;
+                scrollAmount = cardWidth + gap;
+            } else {
+                scrollAmount = 350; // Fallback se não houver cards ou teamGrid
+            }
+
+            function updateScrollButtons() {
+                // Adicionado verificação para garantir que os elementos existam
+                if (teamGrid && scrollLeftBtn && scrollRightBtn) {
+                    // Só atualiza os botões se eles estiverem visíveis
+                    if (window.getComputedStyle(scrollLeftBtn).display !== 'none') {
+                        if (teamGrid.scrollLeft <= 5) {
+                            scrollLeftBtn.classList.add('disabled');
+                        } else {
+                            scrollLeftBtn.classList.remove('disabled');
+                        }
+
+                        if (teamGrid.scrollLeft + teamGrid.clientWidth >= teamGrid.scrollWidth - 5) {
+                            scrollRightBtn.classList.add('disabled');
+                        } else {
+                            scrollRightBtn.classList.remove('disabled');
+                        }
+                    }
+                }
+            }
+            if (scrollLeftBtn) {
+                scrollLeftBtn.addEventListener('click', () => {
+                    teamGrid.scrollBy({
+                        left: -scrollAmount,
+                        behavior: 'smooth'
+                    });
+                });
+            }
+
+            if (scrollRightBtn) {
+                scrollRightBtn.addEventListener('click', () => {
+                    teamGrid.scrollBy({
+                        left: scrollAmount,
+                        behavior: 'smooth'
+                    });
+                });
+            }
+
+            if (teamGrid) { // Verifica se teamGrid existe antes de adicionar o event listener
+                teamGrid.addEventListener('scroll', updateScrollButtons);
+            }
+            // Atualiza os botões ao carregar e ao redimensionar a janela
+            window.addEventListener('resize', updateScrollButtons);
+            setTimeout(updateScrollButtons, 100);
+
+
+            // --- Intersection Observer para animação ao rolar ---
+            const revealElements = document.querySelectorAll('.reveal');
+            const observerOptions = {
+                root: null, // Observa a viewport
+                rootMargin: '0px',
+                threshold: 0.15 // 15% do elemento visível
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target); // Para animar solo una vez
+                    }
+                });
+            }, observerOptions);
+
+            revealElements.forEach(el => {
+                observer.observe(el);
+            });
+
+            // --- Barra de Progresso de Desplazamiento ---
+            window.addEventListener('scroll', () => {
+                // Adicionado verificação para garantir que scrollProgressBar não seja nulo
+                if (scrollProgressBar) {
+                    const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+                    const scrolled = window.scrollY;
+                    const progress = (scrolled / scrollableHeight) * 100;
+                    scrollProgressBar.style.width = progress + '%';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
